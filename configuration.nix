@@ -4,12 +4,12 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
-      ./greetd.nix
+      ./greetd.nix # TUIGreet + greetd
     ];
 
-  # Use the systemd-boot EFI boot loader.
+  # Dualboot with arch
   boot.loader = {
     grub = {
       enable = true;
@@ -21,14 +21,13 @@
     efi.canTouchEfiVariables = true;
   };
 
-  # Use latest kernel.
+  # Nvidia not working on 6.19 yet
   boot.kernelPackages = pkgs.linuxPackages_6_18;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nixos";
   networking.networkmanager.enable = true;
   time.timeZone = "Europe/Oslo";
   i18n.defaultLocale = "en_US.UTF-8";
-  # services.printing.enable = true;
   services.libinput.enable = true;
   services.flatpak.enable = true;
   hardware.bluetooth.enable = true;
@@ -39,7 +38,7 @@
 
   users.users.nexus = {
      isNormalUser = true;
-     extraGroups = [ "wheel" ];
+     extraGroups = [ "wheel" "networkmanager" "input" ];
      shell = pkgs.fish;
      packages = with pkgs; [
      ];
@@ -77,22 +76,17 @@
      wget
      neovim
      fastfetch
-     fuzzel
      yazi
-     git
      unzip
      lshw
-     arch-install-scripts
      os-prober
      efibootmgr
-     swww
-     xclip
      bat
   ];
 
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  system.stateVersion = "25.11"; # Did you read the comment?
+  system.stateVersion = "25.11";
 
 }
 
